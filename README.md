@@ -31,15 +31,12 @@ This project demonstrates a full data science pipeline:
 Naive averaging by age produces misleading results due to **survivorship bias** —
 the only players still active at age 34 are elite outliers, artificially inflating
 average performance at older ages. A simple mean suggested peak performance at age 35,
-which is clearly wrong.
+which is clearly wrong for the average NFL running back.
 
 Mixed-effects modeling solves this by:
 - Fitting each player's individual trajectory via random intercepts
 - Estimating the population-level curve from fixed effects
 - Correctly expressing uncertainty at ages with thin sample sizes
-
-This is the same longitudinal modeling framework used in clinical trials and
-epidemiological cohort studies.
 
 ---
 
@@ -114,18 +111,13 @@ conda activate nfl-aging
 pip install -r requirements.txt
 ```
 
-**4. Generate requirements.txt (if needed)**
-```bash
-pip freeze > requirements.txt
-```
-
-**5. Run the data pipeline**
+**4. Run the data pipeline**
 ```bash
 python scraper/nfl_scraper.py
 python db/load_db.py
 ```
 
-**6. Launch the dashboard**
+**5. Launch the dashboard**
 ```bash
 python -m streamlit run app/streamlit_app.py
 ```
@@ -138,10 +130,34 @@ python -m streamlit run app/streamlit_app.py
   that does not account for exact birth date within the season
 - The quadratic model predicts negative rushing yards past age 35, which is a
   known extrapolation artifact rather than a real prediction
-- Analysis is limited to running backs — WR and QB aging curves would require
-  separate models and different performance metrics
+- Era effects are not controlled for — rule changes and evolving offensive schemes
+  over 2000–2023 affect raw counting stats in ways that may confound aging trends
+- Injury data is not incorporated — a player's decline year may reflect injury
+  rather than true age-related performance loss
+- The 50 carry qualifying threshold is somewhat arbitrary — different thresholds
+  would produce different samples and potentially different peak age estimates
+- Draft pedigree and talent level are not controlled for — first round picks and
+  undrafted free agents are pooled together which may blur the population curve
+- Currently limited to running backs — cross-position comparisons require separate
+  models fitted to position-specific metrics
 
----
+## Future Directions
+
+- **Multi-position extension** — fit separate models for WR, TE, and QB to enable
+  cross-position peak age comparisons on a single visualization
+- **Era-adjusted statistics** — normalize counting stats to league average per season
+  to account for the dramatic rule changes and pass-volume increases since 2000
+- **Survival analysis for career length** — model career duration using Weibull or
+  Cox proportional hazards models, directly applying longitudinal biostatistics methods
+- **Injury-adjusted modeling** — incorporate NFL injury report data to distinguish
+  true age-related decline from injury-interrupted seasons
+- **Draft round stratification** — fit separate aging curves by draft round to test
+  whether elite prospects age differently than later-round players
+- **Player comparison tool** — extend the Streamlit dashboard to overlay two players'
+  career arcs side by side for direct visual comparison
+- **Special teams analysis** — test whether kickers and punters show meaningful
+  age-related decline given their notoriously long careers
+
 
 ## Tools & Libraries
 
